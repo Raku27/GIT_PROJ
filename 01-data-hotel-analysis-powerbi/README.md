@@ -1,0 +1,166 @@
+# Data Hotel Analysis with PowerBI
+
+[![PowerBI](https://img.shields.io/badge/PowerBI-F2C811?style=flat&logo=Power-BI&logoColor=black)](https://powerbi.microsoft.com/)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+
+## 📋 Overview
+
+A comprehensive data analysis project focusing on hotel industry data using PowerBI for visualization and business intelligence. This project demonstrates expertise in data extraction, transformation, cleaning, and creating interactive dashboards that provide actionable insights for hotel management and operations.
+
+## ✨ Features
+
+- **Data Extraction & Transformation**: Automated data pipeline for hotel datasets
+- **Interactive Dashboards**: Multiple PowerBI dashboards with drill-down capabilities
+- **Key Performance Indicators (KPIs)**: Revenue, occupancy rates, customer satisfaction metrics
+- **Time Series Analysis**: Trend analysis for bookings, revenue, and seasonal patterns
+- **Geographic Visualization**: Location-based insights and heat maps
+- **Customer Segmentation**: Analysis of customer demographics and preferences
+- **Revenue Analytics**: Revenue per available room (RevPAR), average daily rate (ADR) analysis
+
+## 🎯 Business Objectives
+
+- Identify booking trends and peak seasons
+- Analyze revenue patterns and optimization opportunities
+- Understand customer behavior and preferences
+- Monitor operational performance metrics
+- Support data-driven decision making for hotel management
+
+## 🛠️ Technologies Used
+
+- **PowerBI**: Dashboard creation and data visualization
+- **Python**: Data preprocessing and analysis (Pandas, NumPy)
+- **SQL**: Data extraction and querying
+- **Excel/CSV**: Data sources and exports
+- **DAX**: Data Analysis Expressions for PowerBI calculations
+
+## 📁 Project Structure
+
+```
+01-data-hotel-analysis-powerbi/
+├── data/                    # Raw and processed datasets
+│   ├── raw/                 # Original data files
+│   └── processed/           # Cleaned and transformed data
+├── powerbi/                 # PowerBI dashboard files (.pbix)
+├── scripts/                 # Python data processing scripts
+│   ├── data_cleaning.py
+│   ├── data_transformation.py
+│   └── data_validation.py
+├── docs/                    # Documentation
+│   ├── data_dictionary.md
+│   └── dashboard_guide.md
+├── reports/                  # Generated reports and exports
+└── README.md                # This file
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- PowerBI Desktop (free download from Microsoft)
+- Python 3.8+ with required packages
+- Access to hotel dataset (or sample data)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Raku27/GIT_PROJ.git
+cd GIT_PROJ/01-data-hotel-analysis-powerbi
+
+# Install Python dependencies
+pip install -r requirements.txt
+```
+
+### Usage
+
+1. **Data Preparation**:
+   ```bash
+   python scripts/data_cleaning.py
+   python scripts/data_transformation.py
+   ```
+
+2. **Open PowerBI Dashboard**:
+   - Open `powerbi/hotel_analysis.pbix` in PowerBI Desktop
+   - Connect to your processed data source
+   - Refresh data and explore dashboards
+
+3. **View Reports**:
+   - Check `reports/` folder for exported reports
+   - Review `docs/dashboard_guide.md` for dashboard navigation
+
+## 📊 Dashboard Features
+
+### Main Dashboard
+- Executive summary with key metrics
+- Revenue trends and forecasts
+- Occupancy rate analysis
+- Customer satisfaction scores
+
+### Revenue Analysis Dashboard
+- Revenue by room type
+- Revenue by location/region
+- Revenue by customer segment
+- Revenue forecasting
+
+### Operational Dashboard
+- Booking trends
+- Cancellation analysis
+- Staff performance metrics
+- Resource utilization
+
+## 📈 Key Metrics & KPIs
+
+- **Occupancy Rate**: Percentage of rooms occupied
+- **ADR (Average Daily Rate)**: Average revenue per occupied room
+- **RevPAR (Revenue per Available Room)**: Total revenue / Total rooms
+- **Customer Satisfaction Score**: Average rating from reviews
+- **Booking Conversion Rate**: Successful bookings / Total inquiries
+
+## 📝 Data Sources
+
+- Hotel booking system data
+- Customer reviews and ratings
+- Financial transaction records
+- Operational metrics
+
+## 🔍 Insights & Findings
+
+*(Add your key findings and insights here after analysis)*
+
+## 📸 Screenshots
+
+*(Add screenshots of your PowerBI dashboards here)*
+
+## 🧪 Testing
+
+```bash
+# Run data validation tests
+python scripts/data_validation.py
+
+# Verify data quality
+python -m pytest tests/
+```
+
+## 📚 Documentation
+
+- [Data Dictionary](docs/data_dictionary.md) - Description of all data fields
+- [Dashboard Guide](docs/dashboard_guide.md) - How to use the PowerBI dashboards
+- [Analysis Methodology](docs/methodology.md) - Approach and techniques used
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read the [Contributing Guidelines](../../CONTRIBUTING.md) first.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+
+## 👤 Author
+
+**Rahul Kumaar Subramani**
+- GitHub: [@Raku27](https://github.com/Raku27)
+- Email: rahulkumaar27@gmail.com
+
+---
+
+⭐ If you found this project helpful, please give it a star!
