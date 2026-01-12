@@ -104,17 +104,29 @@ matches = matcher.match(entities_a, entities_b, criteria)
 print(matches)
 ```
 
-#### API Usage
+#### API Usage (FastAPI)
 
 ```bash
-# Start the API server
+# Start the FastAPI server
 python -m src.api.main
+# Server runs at http://localhost:8000
+
+# Interactive API documentation
+# Visit: http://localhost:8000/docs (Swagger UI)
+# Or: http://localhost:8000/redoc (ReDoc)
 
 # Make matching request
 curl -X POST http://localhost:8000/api/match \
   -H "Content-Type: application/json" \
-  -d '{"entities_a": [...], "entities_b": [...], "criteria": {...}}'
+  -d '{
+    "entities_a": [...],
+    "entities_b": [...],
+    "criteria": {...},
+    "algorithm": "hungarian"
+  }'
 ```
+
+**📚 See detailed API guide**: `docs/api_usage_guide.md`
 
 ## 🔧 Algorithms Implemented
 
