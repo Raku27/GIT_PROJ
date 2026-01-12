@@ -30,10 +30,11 @@ An intelligent matching system designed to pair entities (users, items, jobs, ca
 ## 🛠️ Technologies Used
 
 - **Python**: Core implementation language
+- **FastAPI**: RESTful API framework for matching service
 - **Algorithms**: Graph algorithms, optimization, linear programming
 - **Libraries**: NumPy, SciPy, NetworkX, Pandas
-- **API Framework**: FastAPI or Flask
-- **Database**: PostgreSQL or MongoDB for data storage
+- **Uvicorn**: ASGI server for FastAPI
+- **Pydantic**: Data validation and settings management
 - **Testing**: pytest for unit testing
 
 ## 📁 Project Structure
