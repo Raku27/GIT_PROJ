@@ -1,0 +1,69 @@
+{
+  "data_source": {
+    "file_path": "data/processed/hotel_bookings_powerbi.csv",
+    "file_type": "CSV",
+    "refresh_schedule": "Daily"
+  },
+  "data_model": {
+    "tables": [
+      {
+        "name": "Bookings",
+        "type": "Fact",
+        "key_column": "booking_id"
+      },
+      {
+        "name": "Date",
+        "type": "Dimension",
+        "key_column": "Date",
+        "auto_generate": true
+      }
+    ],
+    "relationships": [
+      {
+        "from_table": "Bookings",
+        "from_column": "check_in_date",
+        "to_table": "Date",
+        "to_column": "Date"
+      }
+    ]
+  },
+  "dashboards": [
+    {
+      "name": "Executive Summary",
+      "description": "High-level KPIs and trends",
+      "visuals": [
+        "KPI Cards",
+        "Revenue Trend",
+        "Revenue by City",
+        "Booking Channel Performance"
+      ]
+    },
+    {
+      "name": "Revenue Analysis",
+      "description": "Detailed revenue breakdown",
+      "visuals": [
+        "Revenue by Hotel Type",
+        "ADR Trend",
+        "Revenue Heatmap",
+        "Top Hotels"
+      ]
+    },
+    {
+      "name": "Operational Metrics",
+      "description": "Operational performance metrics",
+      "visuals": [
+        "Length of Stay Distribution",
+        "Cancellation Analysis",
+        "Booking Channel Comparison",
+        "Customer Segment Analysis"
+      ]
+    }
+  ],
+  "filters": [
+    "Date Range",
+    "City",
+    "Hotel Type",
+    "Booking Channel",
+    "Customer Segment"
+  ]
+}

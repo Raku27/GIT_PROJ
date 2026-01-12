@@ -1,0 +1,40 @@
+
+# PowerBI Setup Instructions
+
+## Quick Start
+
+1. **Collect Data**
+   ```bash
+   python scripts/data_collection.py
+   ```
+
+2. **Process Data**
+   ```bash
+   python scripts/data_cleaning.py
+   python scripts/data_transformation.py
+   ```
+
+3. **Open PowerBI Desktop**
+   - Get Data → Text/CSV
+   - Select: data/processed/hotel_bookings_powerbi.csv
+
+4. **Create Measures**
+   - Open docs/dax_measures.txt
+   - Copy measures into PowerBI
+   - Right-click Bookings table → New Measure
+
+5. **Create Visualizations**
+   - Follow guide in docs/powerbi_dashboard_guide.md
+
+## Data Sources
+
+- Generated sample data (default)
+- Kaggle: hotel-booking-demand dataset
+- Public APIs (if available)
+
+## Next Steps
+
+- Customize measures for your needs
+- Add more data sources
+- Create additional dashboards
+- Set up scheduled refresh

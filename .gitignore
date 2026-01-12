@@ -48,6 +48,10 @@ wheels/
 .coverage
 htmlcov/
 .tox/
+*.pkl
+*.h5
+*.hdf5
+*.joblib
 
 # Node.js
 node_modules/
@@ -93,3 +97,20 @@ logs/
 *.temp
 .cache/
 
+# Data files (add your actual data, but ignore large files)
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.xls
+!data/raw/.gitkeep
+
+# Model files (can be large)
+models/**/*.pkl
+models/**/*.h5
+models/**/*.joblib
+!models/.gitkeep
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# PowerBI files (can be large)
+*.pbix

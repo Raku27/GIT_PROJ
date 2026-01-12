@@ -58,7 +58,7 @@ A comprehensive data analysis project focusing on hotel industry data using Powe
 
 - PowerBI Desktop (free download from Microsoft)
 - Python 3.8+ with required packages
-- Access to hotel dataset (or sample data)
+- Access to hotel dataset (or use generated sample data)
 
 ### Installation
 
@@ -71,22 +71,52 @@ cd GIT_PROJ/01-data-hotel-analysis-powerbi
 pip install -r requirements.txt
 ```
 
-### Usage
+### Quick Start - Create PowerBI Dashboard
 
-1. **Data Preparation**:
+1. **Collect Hotel Booking Data** (from Booking.com, Trivago, or public sources):
+   ```bash
+   python scripts/data_collection.py
+   ```
+   This generates realistic hotel booking data simulating Booking.com/Trivago data and saves it to `data/processed/hotel_bookings_powerbi.csv`
+
+2. **Process and Clean Data**:
    ```bash
    python scripts/data_cleaning.py
    python scripts/data_transformation.py
    ```
 
-2. **Open PowerBI Dashboard**:
-   - Open `powerbi/hotel_analysis.pbix` in PowerBI Desktop
-   - Connect to your processed data source
-   - Refresh data and explore dashboards
+3. **Create PowerBI Template** (optional):
+   ```bash
+   python scripts/create_powerbi_template.py
+   ```
+   This creates DAX measures and configuration files
 
-3. **View Reports**:
-   - Check `reports/` folder for exported reports
-   - Review `docs/dashboard_guide.md` for dashboard navigation
+4. **Open PowerBI Desktop**:
+   - Get Data → Text/CSV
+   - Select: `data/processed/hotel_bookings_powerbi.csv`
+   - Load the data
+
+5. **Create Dashboards**:
+   - Follow the comprehensive guide in `docs/powerbi_dashboard_guide.md`
+   - Use DAX measures from `docs/dax_measures.txt`
+   - Create visualizations for revenue, bookings, occupancy, and more
+
+### Data Sources
+
+**Option 1: Generated Sample Data (Quick Start)**
+- Run `python scripts/data_collection.py` to generate realistic hotel booking data
+- Simulates data from Booking.com, Trivago, and other booking platforms
+- Includes 5,000+ booking records with realistic patterns
+
+**Option 2: Public Datasets**
+- **Kaggle**: Hotel Booking Demand dataset (https://www.kaggle.com/datasets/jessemostipak/hotel-booking-demand)
+- Download and place CSV in `data/raw/` directory
+- Process using the provided scripts
+
+**Option 3: Real Data Collection**
+- Use the data collection script as a template
+- Modify to connect to your data sources
+- Supports CSV, Excel, and database connections
 
 ## 📊 Dashboard Features
 

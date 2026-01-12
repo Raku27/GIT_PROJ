@@ -1,0 +1,109 @@
+============================================================
+DAX MEASURES FOR POWERBI
+============================================================
+
+Copy these measures into PowerBI Desktop:
+1. Right-click on 'Bookings' table
+2. Select 'New Measure'
+3. Paste the DAX formula
+
+
+REVENUE MEASURES
+------------------------------------------------------------
+
+Total Revenue:
+SUM(Bookings[total_revenue])
+
+
+Average Daily Rate (ADR):
+AVERAGE(Bookings[room_rate])
+
+
+Average Revenue per Booking:
+AVERAGE(Bookings[total_revenue])
+
+
+Revenue YTD:
+TOTALYTD([Total Revenue], 'Date'[Date])
+
+
+Revenue vs Previous Year:
+VAR CurrentYear = [Total Revenue]
+                VAR PreviousYear = CALCULATE(
+                    [Total Revenue],
+                    SAMEPERIODLASTYEAR('Date'[Date])
+                )
+                RETURN CurrentYear - PreviousYear
+
+
+Revenue Growth %:
+DIVIDE(
+                    [Revenue vs Previous Year],
+                    CALCULATE([Total Revenue], SAMEPERIODLASTYEAR('Date'[Date])),
+                    0
+                )
+
+
+BOOKING MEASURES
+------------------------------------------------------------
+
+Total Bookings:
+COUNTROWS(Bookings)
+
+
+Bookings YTD:
+TOTALYTD([Total Bookings], 'Date'[Date])
+
+
+Average Length of Stay:
+AVERAGE(Bookings[length_of_stay])
+
+
+Average Guests per Booking:
+AVERAGE(Bookings[num_guests])
+
+
+CANCELLATION MEASURES
+------------------------------------------------------------
+
+Cancelled Bookings:
+CALCULATE([Total Bookings], Bookings[is_cancelled] = 1)
+
+
+Cancellation Rate:
+DIVIDE(
+                    [Cancelled Bookings],
+                    [Total Bookings],
+                    0
+                )
+
+
+Cancellation Revenue Loss:
+CALCULATE(
+                    [Total Revenue],
+                    Bookings[is_cancelled] = 1
+                )
+
+
+KPI MEASURES
+------------------------------------------------------------
+
+Occupancy Rate:
+DIVIDE(
+                    [Total Bookings],
+                    [Total Rooms Available],
+                    0
+                )
+
+
+RevPAR:
+DIVIDE(
+                    [Total Revenue],
+                    [Total Rooms Available],
+                    0
+                )
+
+
+Average Rating:
+AVERAGE(Bookings[rating])
+
