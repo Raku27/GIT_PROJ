@@ -1,0 +1,66 @@
+# CD Pipeline Configuration
+# Continuous Deployment pipeline for automated deployment
+
+name: CD Pipeline
+
+stages:
+  - name: source
+    description: "Checkout source code"
+    commands:
+      - git fetch origin
+      - git checkout ${BRANCH_NAME}
+    
+  - name: build
+    description: "Build project"
+    commands:
+      - npm install
+      - npm run build
+    
+  - name: test
+    description: "Run tests"
+    commands:
+      - npm test
+    
+  - name: package
+    description: "Create Docker image"
+    commands:
+      - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+      - docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+      - docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+    
+  - name: deploy
+    description: "Deploy to environment"
+    strategy: blue_green  # or rolling, canary
+    environment: ${DEPLOY_ENV}
+    commands:
+      - kubectl apply -f k8s/deployment.yaml
+      - kubectl set image deployment/${APP_NAME} ${APP_NAME}=${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+      - kubectl rollout status deployment/${APP_NAME}
+    
+  - name: verify
+    description: "Verify deployment"
+    commands:
+      - ./scripts/health_check.sh
+      - ./scripts/smoke_tests.sh
+    health_checks:
+      - endpoint: /health
+        expected_status: 200
+        timeout: 30
+    
+  - name: monitor
+    description: "Start monitoring"
+    commands:
+      - echo "Monitoring started"
+    alerts:
+      - cpu_threshold: 80
+      - memory_threshold: 85
+      - error_rate_threshold: 1.0
+
+on_success:
+  - notify: "Deployment successful"
+  - update_status: "deployed"
+
+on_failure:
+  - notify: "Deployment failed"
+  - rollback: true
+  - revert_to: previous_version
