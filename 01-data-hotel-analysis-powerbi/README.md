@@ -56,7 +56,8 @@ A comprehensive data analysis project focusing on hotel industry data using Powe
 
 ### Prerequisites
 
-- PowerBI Desktop (free download from Microsoft)
+- **For Mac Users**: PowerBI Service (web) - Sign up at https://powerbi.microsoft.com (free)
+- **For Windows Users**: PowerBI Desktop (free download from Microsoft)
 - Python 3.8+ with required packages
 - Access to hotel dataset (or use generated sample data)
 
@@ -91,13 +92,24 @@ pip install -r requirements.txt
    ```
    This creates DAX measures and configuration files
 
-4. **Open PowerBI Desktop**:
+4. **Open PowerBI** (Mac or Windows):
+
+   **For Mac Users (PowerBI Web/Service)**:
+   - Go to: https://app.powerbi.com
+   - Sign in with Microsoft account
+   - Click **"New"** → **"Dataset"** → **"Upload a file"**
+   - Select: `data/processed/hotel_bookings_powerbi.csv`
+   - See detailed guide: `docs/powerbi_web_setup_mac.md`
+
+   **For Windows Users (PowerBI Desktop)**:
+   - Open PowerBI Desktop
    - Get Data → Text/CSV
    - Select: `data/processed/hotel_bookings_powerbi.csv`
    - Load the data
 
 5. **Create Dashboards**:
-   - Follow the comprehensive guide in `docs/powerbi_dashboard_guide.md`
+   - **Mac**: Follow `docs/powerbi_web_setup_mac.md` for web-based dashboard creation
+   - **Windows**: Follow `docs/powerbi_dashboard_guide.md` for Desktop
    - Use DAX measures from `docs/dax_measures.txt`
    - Create visualizations for revenue, bookings, occupancy, and more
 

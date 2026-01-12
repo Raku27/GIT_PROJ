@@ -57,6 +57,8 @@ def main():
     print("\n" + "=" * 60)
     print("Next Steps:")
     print("1. Load transformed data into PowerBI")
+    print("   - Mac Users: Use PowerBI Service (web) - see QUICK_START_MAC.md")
+    print("   - Windows Users: Use PowerBI Desktop")
     print("2. Create interactive dashboards")
     print("3. Analyze KPIs: Occupancy Rate, ADR, RevPAR")
     print("=" * 60)
