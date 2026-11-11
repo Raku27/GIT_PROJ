@@ -2,6 +2,7 @@ import itertools
 import random
 
 import pytest
+
 from example_usage import create_example_entities
 from src.algorithms.gale_shapley import GaleShapleyMatcher
 from src.algorithms.hungarian import HungarianMatcher

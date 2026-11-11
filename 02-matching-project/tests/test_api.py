@@ -2,6 +2,7 @@ from copy import deepcopy
 
 import pytest
 from fastapi.testclient import TestClient
+
 from src.api.main import HungarianMatcher, app
 
 client = TestClient(app)
