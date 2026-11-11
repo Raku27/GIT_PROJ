@@ -18,14 +18,15 @@ Comprehensive hotel data analysis and visualization using PowerBI. This project 
 - Business insights and analytics
 - Performance metrics visualization
 
-### 2. 🔄 [Matching Project](./02-matching-project)
-An intelligent matching system for pairing entities based on multiple criteria. This project showcases algorithm design and optimization techniques.
+### 2. [Matching Optimization API](./02-matching-project)
+A tested Python/FastAPI service comparing maximum-total-score assignment and stable preference matching.
 
-**Key Features:**
-- Advanced matching algorithms
-- Multi-criteria optimization
-- Performance benchmarking
-- Scalable architecture
+- Shared scoring, candidate/job field mappings, and per-attribute explanations
+- 46 algorithm/API tests, including exhaustive small-case optimality and blocking-pair checks
+- [Measured latency and memory](./02-matching-project/docs/benchmarks.md) for 10–200 entities per group
+- [Two-minute local demo](./02-matching-project/docs/demo.md) showing why stability and total score differ
+
+[Setup and limitations](./02-matching-project/README.md) · [API guide](./02-matching-project/docs/api_usage_guide.md)
 
 ### 3. ⚙️ [Engineering Pipeline with Agent](./03-engineering-pipeline-agent)
 Automated engineering pipeline with intelligent agent-based orchestration. Demonstrates CI/CD, automation, and agent-based system design.

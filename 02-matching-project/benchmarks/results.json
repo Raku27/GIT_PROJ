@@ -1,0 +1,444 @@
+{
+  "measured_at_utc": "2026-11-11T23:56:45.504785+00:00",
+  "environment": {
+    "os": "macOS-27.2-arm64-arm-64bit-Mach-O",
+    "cpu": "Apple M1 Pro",
+    "logical_cpus": 10,
+    "python": "3.13.7",
+    "packages": {
+      "numpy": "2.5.4",
+      "scipy": "1.18.1"
+    },
+    "cpu_metadata_source": "Read from host sysctl separately; benchmark worker has restricted hardware metadata access."
+  },
+  "method": "5 default repeats; independent fresh subprocess per sample; seeds 27 onward. Timer covers match() only. Peak RSS covers the whole worker including imports and input creation; not incremental memory, not API latency, no warm-up. RSS units normalized for macOS/Linux. Synthetic balanced groups, three weighted attributes, min_score=0.3; derived preference rankings.",
+  "repeats": 5,
+  "summary": [
+    {
+      "size_per_group": 10,
+      "algorithm": "hungarian",
+      "median_latency_ms": 0.4576249630190432,
+      "min_latency_ms": 0.438000017311424,
+      "max_latency_ms": 0.4847919917665422,
+      "max_peak_process_rss_mib": 74.53125
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "gale_shapley",
+      "median_latency_ms": 0.47250004718080163,
+      "min_latency_ms": 0.4617500235326588,
+      "max_latency_ms": 0.49637496704235673,
+      "max_peak_process_rss_mib": 74.75
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "hungarian",
+      "median_latency_ms": 8.899917011149228,
+      "min_latency_ms": 8.825708995573223,
+      "max_latency_ms": 9.256417048163712,
+      "max_peak_process_rss_mib": 74.78125
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "gale_shapley",
+      "median_latency_ms": 10.075250000227243,
+      "min_latency_ms": 9.800667001400143,
+      "max_latency_ms": 10.615874954964966,
+      "max_peak_process_rss_mib": 74.734375
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "hungarian",
+      "median_latency_ms": 35.05000000586733,
+      "min_latency_ms": 34.03025004081428,
+      "max_latency_ms": 36.62712499499321,
+      "max_peak_process_rss_mib": 77.421875
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "gale_shapley",
+      "median_latency_ms": 40.29812500812113,
+      "min_latency_ms": 39.134291000664234,
+      "max_latency_ms": 41.172459023073316,
+      "max_peak_process_rss_mib": 79.4375
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "hungarian",
+      "median_latency_ms": 140.2261249604635,
+      "min_latency_ms": 135.14724996639416,
+      "max_latency_ms": 141.2372500053607,
+      "max_peak_process_rss_mib": 89.984375
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "gale_shapley",
+      "median_latency_ms": 166.60854103974998,
+      "min_latency_ms": 163.94325002329424,
+      "max_latency_ms": 170.5016249907203,
+      "max_peak_process_rss_mib": 98.03125
+    }
+  ],
+  "samples": [
+    {
+      "size_per_group": 10,
+      "algorithm": "hungarian",
+      "seed": 27,
+      "latency_ms": 0.4660410340875387,
+      "peak_process_rss_mib": 74.53125,
+      "matches": 10,
+      "total_score": 6.223726273726274
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "hungarian",
+      "seed": 28,
+      "latency_ms": 0.4576249630190432,
+      "peak_process_rss_mib": 74.359375,
+      "matches": 10,
+      "total_score": 6.051398601398602
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "hungarian",
+      "seed": 29,
+      "latency_ms": 0.4847919917665422,
+      "peak_process_rss_mib": 74.5,
+      "matches": 10,
+      "total_score": 6.195008325008326
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "hungarian",
+      "seed": 30,
+      "latency_ms": 0.438000017311424,
+      "peak_process_rss_mib": 74.28125,
+      "matches": 10,
+      "total_score": 5.859805194805195
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "hungarian",
+      "seed": 31,
+      "latency_ms": 0.44416700256988406,
+      "peak_process_rss_mib": 74.046875,
+      "matches": 10,
+      "total_score": 6.0344155844155845
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "gale_shapley",
+      "seed": 27,
+      "latency_ms": 0.46791700879111886,
+      "peak_process_rss_mib": 74.75,
+      "matches": 10,
+      "total_score": 6.223726273726274
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "gale_shapley",
+      "seed": 28,
+      "latency_ms": 0.49637496704235673,
+      "peak_process_rss_mib": 74.453125,
+      "matches": 9,
+      "total_score": 5.785629370629371
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "gale_shapley",
+      "seed": 29,
+      "latency_ms": 0.47250004718080163,
+      "peak_process_rss_mib": 73.859375,
+      "matches": 10,
+      "total_score": 6.016436896436897
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "gale_shapley",
+      "seed": 30,
+      "latency_ms": 0.4617500235326588,
+      "peak_process_rss_mib": 73.921875,
+      "matches": 8,
+      "total_score": 4.9435714285714285
+    },
+    {
+      "size_per_group": 10,
+      "algorithm": "gale_shapley",
+      "seed": 31,
+      "latency_ms": 0.49116602167487144,
+      "peak_process_rss_mib": 73.9375,
+      "matches": 9,
+      "total_score": 5.622597402597402
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "hungarian",
+      "seed": 27,
+      "latency_ms": 8.842500043101609,
+      "peak_process_rss_mib": 74.78125,
+      "matches": 50,
+      "total_score": 39.96484432234432
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "hungarian",
+      "seed": 28,
+      "latency_ms": 8.825708995573223,
+      "peak_process_rss_mib": 74.453125,
+      "matches": 50,
+      "total_score": 39.812241092241095
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "hungarian",
+      "seed": 29,
+      "latency_ms": 8.998083008918911,
+      "peak_process_rss_mib": 74.65625,
+      "matches": 50,
+      "total_score": 38.710344655344656
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "hungarian",
+      "seed": 30,
+      "latency_ms": 9.256417048163712,
+      "peak_process_rss_mib": 74.59375,
+      "matches": 50,
+      "total_score": 39.17931651681652
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "hungarian",
+      "seed": 31,
+      "latency_ms": 8.899917011149228,
+      "peak_process_rss_mib": 74.078125,
+      "matches": 50,
+      "total_score": 37.189641192141195
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "gale_shapley",
+      "seed": 27,
+      "latency_ms": 9.800667001400143,
+      "peak_process_rss_mib": 74.71875,
+      "matches": 49,
+      "total_score": 38.973576423576425
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "gale_shapley",
+      "seed": 28,
+      "latency_ms": 10.615874954964966,
+      "peak_process_rss_mib": 74.46875,
+      "matches": 50,
+      "total_score": 39.20978687978688
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "gale_shapley",
+      "seed": 29,
+      "latency_ms": 10.075250000227243,
+      "peak_process_rss_mib": 74.71875,
+      "matches": 50,
+      "total_score": 38.03331501831502
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "gale_shapley",
+      "seed": 30,
+      "latency_ms": 9.891207970213145,
+      "peak_process_rss_mib": 74.734375,
+      "matches": 49,
+      "total_score": 38.12857975357976
+    },
+    {
+      "size_per_group": 50,
+      "algorithm": "gale_shapley",
+      "seed": 31,
+      "latency_ms": 10.138291982002556,
+      "peak_process_rss_mib": 74.09375,
+      "matches": 48,
+      "total_score": 35.790788378288376
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "hungarian",
+      "seed": 27,
+      "latency_ms": 34.03025004081428,
+      "peak_process_rss_mib": 76.796875,
+      "matches": 100,
+      "total_score": 82.30524392274393
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "hungarian",
+      "seed": 28,
+      "latency_ms": 35.05000000586733,
+      "peak_process_rss_mib": 77.34375,
+      "matches": 100,
+      "total_score": 82.77521728271728
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "hungarian",
+      "seed": 29,
+      "latency_ms": 34.798124979715794,
+      "peak_process_rss_mib": 77.1875,
+      "matches": 100,
+      "total_score": 82.06733516483517
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "hungarian",
+      "seed": 30,
+      "latency_ms": 35.23033298552036,
+      "peak_process_rss_mib": 77.125,
+      "matches": 100,
+      "total_score": 82.12224442224442
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "hungarian",
+      "seed": 31,
+      "latency_ms": 36.62712499499321,
+      "peak_process_rss_mib": 77.421875,
+      "matches": 100,
+      "total_score": 80.61817765567766
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "gale_shapley",
+      "seed": 27,
+      "latency_ms": 39.134291000664234,
+      "peak_process_rss_mib": 78.96875,
+      "matches": 99,
+      "total_score": 81.05372211122211
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "gale_shapley",
+      "seed": 28,
+      "latency_ms": 40.29812500812113,
+      "peak_process_rss_mib": 78.609375,
+      "matches": 99,
+      "total_score": 80.67015068265069
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "gale_shapley",
+      "seed": 29,
+      "latency_ms": 41.1648330045864,
+      "peak_process_rss_mib": 78.71875,
+      "matches": 99,
+      "total_score": 80.20343656343657
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "gale_shapley",
+      "seed": 30,
+      "latency_ms": 41.172459023073316,
+      "peak_process_rss_mib": 79.4375,
+      "matches": 98,
+      "total_score": 80.04380536130536
+    },
+    {
+      "size_per_group": 100,
+      "algorithm": "gale_shapley",
+      "seed": 31,
+      "latency_ms": 40.198792004957795,
+      "peak_process_rss_mib": 79.125,
+      "matches": 96,
+      "total_score": 77.61217449217449
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "hungarian",
+      "seed": 27,
+      "latency_ms": 135.14724996639416,
+      "peak_process_rss_mib": 89.53125,
+      "matches": 200,
+      "total_score": 172.20384615384614
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "hungarian",
+      "seed": 28,
+      "latency_ms": 140.2261249604635,
+      "peak_process_rss_mib": 89.625,
+      "matches": 200,
+      "total_score": 172.84843822843823
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "hungarian",
+      "seed": 29,
+      "latency_ms": 141.2372500053607,
+      "peak_process_rss_mib": 89.140625,
+      "matches": 200,
+      "total_score": 171.65056277056277
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "hungarian",
+      "seed": 30,
+      "latency_ms": 138.34854203741997,
+      "peak_process_rss_mib": 89.984375,
+      "matches": 200,
+      "total_score": 170.9797111222111
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "hungarian",
+      "seed": 31,
+      "latency_ms": 140.824000001885,
+      "peak_process_rss_mib": 89.265625,
+      "matches": 200,
+      "total_score": 174.54192057942058
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "gale_shapley",
+      "seed": 27,
+      "latency_ms": 166.21799999848008,
+      "peak_process_rss_mib": 97.015625,
+      "matches": 199,
+      "total_score": 169.8674467199467
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "gale_shapley",
+      "seed": 28,
+      "latency_ms": 170.5016249907203,
+      "peak_process_rss_mib": 96.9375,
+      "matches": 198,
+      "total_score": 170.10223526473527
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "gale_shapley",
+      "seed": 29,
+      "latency_ms": 163.94325002329424,
+      "peak_process_rss_mib": 97.171875,
+      "matches": 199,
+      "total_score": 168.80985764235766
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "gale_shapley",
+      "seed": 30,
+      "latency_ms": 167.8612080286257,
+      "peak_process_rss_mib": 98.03125,
+      "matches": 200,
+      "total_score": 168.70936396936398
+    },
+    {
+      "size_per_group": 200,
+      "algorithm": "gale_shapley",
+      "seed": 31,
+      "latency_ms": 166.60854103974998,
+      "peak_process_rss_mib": 96.328125,
+      "matches": 197,
+      "total_score": 171.0110705960706
+    }
+  ]
+}

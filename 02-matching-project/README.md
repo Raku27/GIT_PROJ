@@ -1,207 +1,93 @@
-# Matching Project
+# Matching Optimization API
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Algorithm](https://img.shields.io/badge/Algorithm-Optimization-green.svg)]()
+A Python/FastAPI portfolio project comparing maximum-total-score assignment with stable preference matching. The included scenario pairs candidates with jobs using skills, experience, education and location.
 
-## 📋 Overview
+## Implemented
 
-An intelligent matching system designed to pair entities (users, items, jobs, candidates, etc.) based on multiple criteria and constraints. This project demonstrates advanced algorithm design, optimization techniques, and scalable system architecture for matching problems.
+- One-to-one assignment through SciPy's `linear_sum_assignment` (modified Jonker–Volgenant solver).
+- Gale–Shapley matching with explicit or score-derived rankings, including incomplete preference lists.
+- Shared normalized scoring, configurable field mappings and per-attribute explanations.
+- Validated REST API, Swagger UI, regression tests and GitHub Actions checks.
 
-## ✨ Features
+This is a local demonstration. Custom constraints, multiple matches per entity, persistence, dashboards, Greedy and Linear Programming algorithms are not implemented. No production capacity or recruitment outcome claims are made.
 
-- **Multi-Criteria Matching**: Match entities based on multiple weighted criteria
-- **Optimization Algorithms**: Implement various matching algorithms (Hungarian, Gale-Shapley, Greedy, etc.)
-- **Constraint Handling**: Support for hard and soft constraints
-- **Scalability**: Efficient algorithms for large-scale matching problems
-- **Performance Metrics**: Comprehensive evaluation and benchmarking
-- **API Interface**: RESTful API for integration with other systems
-- **Visualization**: Interactive dashboards for matching results
+## Run locally
 
-## 🎯 Use Cases
-
-- Job candidate matching
-- Mentor-mentee pairing
-- Product recommendation
-- Resource allocation
-- Team formation
-- Dating/matchmaking applications
-- Course-student assignment
-
-## 🛠️ Technologies Used
-
-- **Python**: Core implementation language
-- **FastAPI**: RESTful API framework for matching service
-- **Algorithms**: Graph algorithms, optimization, linear programming
-- **Libraries**: NumPy, SciPy, NetworkX, Pandas
-- **Uvicorn**: ASGI server for FastAPI
-- **Pydantic**: Data validation and settings management
-- **Testing**: pytest for unit testing
-
-## 📁 Project Structure
-
-```
-02-matching-project/
-├── src/                    # Source code
-│   ├── algorithms/         # Matching algorithms
-│   │   ├── hungarian.py
-│   │   ├── gale_shapley.py
-│   │   └── greedy.py
-│   ├── models/             # Data models
-│   ├── api/                # API endpoints
-│   └── utils/              # Utility functions
-├── tests/                  # Test files
-│   ├── test_algorithms.py
-│   └── test_api.py
-├── data/                   # Sample data and datasets
-├── docs/                   # Documentation
-│   ├── algorithm_design.md
-│   └── api_documentation.md
-├── notebooks/              # Jupyter notebooks for analysis
-├── requirements.txt        # Python dependencies
-└── README.md               # This file
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- pip package manager
-- (Optional) PostgreSQL for database storage
-
-### Installation
+Tested runtime: **Python 3.13**.
 
 ```bash
-# Clone the repository
 git clone https://github.com/Raku27/GIT_PROJ.git
 cd GIT_PROJ/02-matching-project
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### Usage
-
-#### Basic Matching
-
-```python
-from src.algorithms.hungarian import HungarianMatcher
-from src.models.entities import Entity, Criteria
-
-# Create entities and criteria
-entities_a = [Entity(id=1, attributes={...}), ...]
-entities_b = [Entity(id=2, attributes={...}), ...]
-
-# Initialize matcher
-matcher = HungarianMatcher()
-
-# Perform matching
-matches = matcher.match(entities_a, entities_b, criteria)
-print(matches)
-```
-
-#### API Usage (FastAPI)
-
-```bash
-# Start the FastAPI server
+python3.13 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-lock.txt
+python example_usage.py
 python -m src.api.main
-# Server runs at http://localhost:8000
-
-# Interactive API documentation
-# Visit: http://localhost:8000/docs (Swagger UI)
-# Or: http://localhost:8000/redoc (ReDoc)
-
-# Make matching request
-curl -X POST http://localhost:8000/api/match \
-  -H "Content-Type: application/json" \
-  -d '{
-    "entities_a": [...],
-    "entities_b": [...],
-    "criteria": {...},
-    "algorithm": "hungarian"
-  }'
 ```
 
-**📚 See detailed API guide**: `docs/api_usage_guide.md`
+The server binds to `127.0.0.1:8000`. Open [Swagger UI](http://127.0.0.1:8000/docs) or [ReDoc](http://127.0.0.1:8000/redoc).
 
-## 🔧 Algorithms Implemented
+`requirements.txt` pins direct runtime dependencies; `requirements-dev.txt` adds test tools; `requirements-lock.txt` pins the complete tested runtime and test environment.
 
-### 1. Hungarian Algorithm
-- Optimal assignment for bipartite matching
-- Time complexity: O(n³)
-- Best for: One-to-one matching with cost minimization
+## Example result
 
-### 2. Gale-Shapley Algorithm
-- Stable matching algorithm
-- Time complexity: O(n²)
-- Best for: Stable marriage problem, preference-based matching
+The supplied example maps `skills → required_skills`, `experience_years → min_experience` and `education → education_level`. Both algorithms return:
 
-### 3. Greedy Matching
-- Fast heuristic approach
-- Time complexity: O(n log n)
-- Best for: Large-scale approximate matching
+| Candidate | Job | Score |
+|---|---|---|
+| candidate_1 | job_1 | 0.80 |
+| candidate_2 | job_2 | 1.00 |
+| candidate_3 | job_3 | 1.00 |
 
-### 4. Linear Programming
-- Optimal solution using optimization
-- Best for: Complex constraints and multi-objective optimization
+Total score: **2.80**. Runtime depends on the machine; these results are not a performance benchmark.
 
-## 📊 Performance Metrics
+## Algorithm tradeoffs
 
-- **Matching Quality**: Satisfaction score, preference fulfillment
-- **Algorithm Efficiency**: Time complexity, execution time
-- **Scalability**: Performance with increasing dataset size
-- **Accuracy**: Comparison with optimal solutions
+| Mode | Objective | Preferences |
+|---|---|---|
+| `hungarian` | Maximize the sum of eligible pair scores | Explicit rankings do not influence assignment |
+| `gale_shapley` | No blocking pair among mutually acceptable ranked partners | Explicit rankings take precedence; otherwise derive rankings from scores |
 
-## 🧪 Testing
+Both modes use the same scoring policy. Stability does not imply maximum total score. Proposers are group A; score ties use input order. Positive scores meeting `min_score` are eligible. Required fields must exist and be non-null on both mapped sides. Missing fields contribute zero; remaining weights are not renormalized per pair.
+
+For job matching, `required_skills` uses coverage of the job's skills, and `min_experience` uses a binary meets-minimum score. These are weighted comparisons, not mandatory skill/experience constraints. Other lists use Jaccard overlap, strings use normalized exact equality, and numeric similarity uses relative difference. Education strings are exact comparisons, not an ordered qualification hierarchy. These rules are illustrative and have not been validated for real hiring decisions.
+
+## Verify
 
 ```bash
-# Run all tests
-pytest tests/
-
-# Run with coverage
-pytest --cov=src tests/
-
-# Run specific test file
-pytest tests/test_algorithms.py
+python -m pytest --cov=src --cov-report=term-missing
 ```
 
-## 📈 Example Results
+Tests cover startup/imports, empty and rectangular inputs, invalid requests, example results, missing fields, explicit preferences, exhaustive small-case assignment optimality and randomized blocking-pair checks for stable matching. CI runs on Python 3.13.
 
-*(Add example matching results and visualizations here)*
+## Architecture
 
-## 🔍 Algorithm Selection Guide
+```text
+src/api/main.py              Request validation, error handling and response schemas
+src/models/entities.py      Domain objects and normalized criteria
+src/algorithms/scoring.py    Shared scoring, eligibility and ID validation
+src/algorithms/hungarian.py  Maximum-score assignment
+src/algorithms/gale_shapley.py Stable preference matching
+example_usage.py             Reproducible candidate/job example
+tests/                       Algorithm and API regression tests
+```
 
-| Algorithm | Best For | Complexity | Optimal |
-|-----------|----------|------------|---------|
-| Hungarian | Cost minimization | O(n³) | Yes |
-| Gale-Shapley | Stable matching | O(n²) | Yes |
-| Greedy | Fast approximation | O(n log n) | No |
-| Linear Programming | Complex constraints | Variable | Yes |
+The service is stateless. Synchronous API handlers run in FastAPI's worker thread pool. This keeps computation off the event loop; threads do not provide CPU isolation or unlimited concurrency. Both methods materialize all candidate pairs (O(nm) memory); derived rankings require sorting, and Gale–Shapley uses constant-time ranking lookups during proposals.
 
-## 📚 Documentation
+## Deployment limits and next improvements
 
-- [Algorithm Design](docs/algorithm_design.md) - Detailed algorithm explanations
-- [API Documentation](docs/api_documentation.md) - API endpoints and usage
-- [Performance Analysis](docs/performance.md) - Benchmarking results
+The API permits at most 200 entities per group, 50 attribute keys per entity and 10,000 serialized attribute bytes per entity. IDs must be unique across both groups. Unsupported custom constraints and `max_matches != 1` are rejected.
 
-## 🤝 Contributing
+There is no application authentication or rate limiting. Before exposing publicly, add gateway access controls, rate limits, a raw request-body size limit, execution timeouts and bounded worker capacity. Model bounds apply after JSON parsing and are not a network-body limit.
 
-Contributions are welcome! Please read the [Contributing Guidelines](../../CONTRIBUTING.md) first.
+## Evidence and demo
 
-## 📝 License
+- [Measured benchmarks](docs/benchmarks.md): seeded runs at 10, 50, 100 and 200 entities per group, with raw samples, latency and process memory.
+- [Two-minute walkthrough](docs/demo.md): run the service, inspect score explanations, and compare competing objectives.
+- Run `python -m examples.algorithm_tradeoff` to see maximum-score assignment achieve **2.0** while preference-stable matching achieves **0.2** on the same pair scores. Both results are correct for their different objectives.
 
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+Next milestones: a labeled evaluation dataset, controlled concurrent API load tests, and a bounded public deployment. See the [API guide](docs/api_usage_guide.md).
 
-## 👤 Author
+## Author and license
 
-**Rahul Kumaar Subramani**
-- GitHub: [@Raku27](https://github.com/Raku27)
-- Email: rahulkumaar27@gmail.com
-
----
-
-⭐ If you found this project helpful, please give it a star!
+Rahul Kumaar Subramani · [GitHub](https://github.com/Raku27) · [MIT license](../LICENSE) · [Contributing](../CONTRIBUTING.md)
