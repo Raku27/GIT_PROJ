@@ -58,7 +58,7 @@ For job matching, `required_skills` uses coverage of the job's skills, and `min_
 python -m pytest --cov=src --cov-report=term-missing
 ```
 
-Tests cover startup/imports, empty and rectangular inputs, invalid requests, example results, missing fields, explicit preferences, exhaustive small-case assignment optimality and randomized blocking-pair checks for stable matching. CI runs on Python 3.13.
+Tests cover startup/imports, empty and rectangular inputs, invalid requests, example results, missing fields, explicit preferences, exhaustive small-case assignment optimality and randomized blocking-pair checks for stable matching. CI runs on Python 3.13 through the [common project runner](../03-engineering-pipeline-agent/README.md), using a shared configuration and downloadable command logs/reports.
 
 ## Architecture
 

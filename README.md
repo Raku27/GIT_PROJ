@@ -28,14 +28,13 @@ A tested Python/FastAPI service comparing maximum-total-score assignment and sta
 
 [Setup and limitations](./02-matching-project/README.md) · [API guide](./02-matching-project/docs/api_usage_guide.md)
 
-### 3. ⚙️ [Engineering Pipeline with Agent](./03-engineering-pipeline-agent)
-Automated engineering pipeline with intelligent agent-based orchestration. Demonstrates CI/CD, automation, and agent-based system design.
+### 3. [Common Project Runner](./03-engineering-pipeline-agent)
+A configuration-driven Python runner for real project commands, with dependency gates, deadlines and per-run logs/reports.
 
-**Key Features:**
-- Automated pipeline orchestration
-- Agent-based decision making
-- CI/CD integration
-- Monitoring and logging
+- Reusable JSON configurations for Matching API and runner regression checks
+- Real exit-code handling, bounded logs, process-group cleanup and fresh run state
+- Matching API's GitHub workflow uses the shared runner
+- [Setup and current limitations](./03-engineering-pipeline-agent/README.md)
 
 ### 4. 🤖 [AI Analysis](./04-ai-analysis)
 Advanced AI-powered analysis system for data insights and predictions. Showcases machine learning, deep learning, and AI model deployment.

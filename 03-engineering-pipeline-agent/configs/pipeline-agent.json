@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "name": "pipeline-agent",
+  "project_dir": "03-engineering-pipeline-agent",
+  "stages": [
+    {
+      "name": "tests",
+      "argv": [
+        "{python}",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "name": "shell-syntax",
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/deploy.sh"
+      ],
+      "needs": [],
+      "timeout_seconds": 30
+    }
+  ]
+}
