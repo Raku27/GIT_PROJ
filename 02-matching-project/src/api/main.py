@@ -1,162 +1,135 @@
-"""
-FastAPI application for matching service
-"""
+"""Bounded matching API. Synchronous endpoints run outside the ASGI event loop."""
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+import json
+import logging
+from typing import Any, Literal
+from uuid import uuid4
+
 import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from ..models.entities import Entity, EntityType, Criteria, Match
-from ..algorithms.hungarian import HungarianMatcher
 from ..algorithms.gale_shapley import GaleShapleyMatcher
+from ..algorithms.hungarian import HungarianMatcher
+from ..models.entities import Criteria, Entity, EntityType
 
-app = FastAPI(
-    title="Matching Service API",
-    description="API for intelligent entity matching",
-    version="1.0.0"
-)
-
-
-class EntityRequest(BaseModel):
-    """Entity request model"""
-    id: str
-    entity_type: str
-    attributes: Dict[str, Any]
-    preferences: Optional[List[str]] = None
-    constraints: Optional[Dict[str, Any]] = None
+logger = logging.getLogger(__name__)
+app = FastAPI(title="Matching Service API", version="1.1.0")
 
 
-class CriteriaRequest(BaseModel):
-    """Criteria request model"""
-    weights: Dict[str, float]
-    required_attributes: List[str] = []
-    optional_attributes: List[str] = []
-    min_score: float = 0.0
-    max_matches: int = 1
+@app.exception_handler(RequestValidationError)
+def validation_error_handler(request, exc):
+    # Omit raw input and error context: these can contain secrets or nonfinite numbers.
+    errors = [
+        {"loc": error["loc"], "msg": error["msg"], "type": error["type"]}
+        for error in exc.errors()
+    ]
+    return JSONResponse(status_code=422, content={"detail": errors})
 
 
-class MatchingRequest(BaseModel):
-    """Matching request model"""
-    entities_a: List[EntityRequest]
-    entities_b: List[EntityRequest]
+class RequestModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+
+class EntityRequest(RequestModel):
+    id: str = Field(min_length=1, max_length=128)
+    entity_type: EntityType
+    attributes: dict[str, Any] = Field(max_length=50)
+    preferences: list[str] | None = Field(default=None, max_length=200)
+    constraints: dict[str, Any] | None = None
+
+    @model_validator(mode="after")
+    def bounded_attributes(self):
+        try:
+            size = len(json.dumps(self.attributes, allow_nan=False).encode())
+        except (ValueError, TypeError) as exc:
+            raise ValueError("Attributes must be finite JSON values") from exc
+        if size > 10000:
+            raise ValueError("Attributes must fit within 10000 JSON bytes")
+        return self
+
+
+class CriteriaRequest(RequestModel):
+    weights: dict[str, float] = Field(min_length=1, max_length=50)
+    required_attributes: list[str] = Field(default_factory=list, max_length=50)
+    optional_attributes: list[str] = Field(default_factory=list, max_length=50)
+    min_score: float = Field(default=0.0, ge=0, le=1)
+    max_matches: Literal[1] = 1
+    attribute_mappings: dict[str, str] = Field(default_factory=dict, max_length=50)
+
+    @model_validator(mode="after")
+    def valid_weights(self):
+        Criteria(**self.model_dump())
+        return self
+
+
+class MatchingRequest(RequestModel):
+    entities_a: list[EntityRequest] = Field(max_length=200)
+    entities_b: list[EntityRequest] = Field(max_length=200)
     criteria: CriteriaRequest
-    algorithm: str = "hungarian"  # "hungarian" or "gale_shapley"
+    algorithm: Literal["hungarian", "gale_shapley"] = "hungarian"
 
 
 class MatchResponse(BaseModel):
-    """Match response model"""
     entity_a_id: str
     entity_b_id: str
     score: float
-    details: Dict[str, Any]
+    details: dict[str, Any]
 
 
 class MatchingResponse(BaseModel):
-    """Matching response model"""
-    matches: List[MatchResponse]
-    unmatched_entities: List[str]
+    matches: list[MatchResponse]
+    unmatched_entities: list[str]
     total_score: float
     execution_time: float
-    statistics: Dict[str, Any]
+    statistics: dict[str, Any]
 
 
 @app.get("/")
-async def root():
-    """Root endpoint"""
+def root():
     return {
         "message": "Matching Service API",
-        "version": "1.0.0",
-        "endpoints": {
-            "match": "/api/match",
-            "health": "/health"
-        }
+        "version": "1.1.0",
+        "endpoints": {"match": "/api/match", "health": "/health"},
     }
 
 
 @app.get("/health")
-async def health():
-    """Health check endpoint"""
+def health():
     return {"status": "healthy"}
 
 
 @app.post("/api/match", response_model=MatchingResponse)
-async def match_entities(request: MatchingRequest):
-    """
-    Perform matching between two sets of entities
-    
-    Args:
-        request: Matching request with entities and criteria
-        
-    Returns:
-        Matching result with matches and statistics
-    """
+def match_entities(request: MatchingRequest):
     try:
-        # Convert request entities to Entity objects
-        entities_a = [
-            Entity(
-                id=e.id,
-                entity_type=EntityType(e.entity_type),
-                attributes=e.attributes,
-                preferences=e.preferences,
-                constraints=e.constraints
-            )
-            for e in request.entities_a
-        ]
-        
-        entities_b = [
-            Entity(
-                id=e.id,
-                entity_type=EntityType(e.entity_type),
-                attributes=e.attributes,
-                preferences=e.preferences,
-                constraints=e.constraints
-            )
-            for e in request.entities_b
-        ]
-        
-        # Convert criteria
-        criteria = Criteria(
-            weights=request.criteria.weights,
-            required_attributes=request.criteria.required_attributes,
-            optional_attributes=request.criteria.optional_attributes,
-            min_score=request.criteria.min_score,
-            max_matches=request.criteria.max_matches
+        a = [Entity(**e.model_dump()) for e in request.entities_a]
+        b = [Entity(**e.model_dump()) for e in request.entities_b]
+        criteria = Criteria(**request.criteria.model_dump())
+        matcher = (
+            HungarianMatcher()
+            if request.algorithm == "hungarian"
+            else GaleShapleyMatcher()
         )
-        
-        # Select algorithm
-        if request.algorithm.lower() == "hungarian":
-            matcher = HungarianMatcher()
-        elif request.algorithm.lower() == "gale_shapley":
-            matcher = GaleShapleyMatcher()
-        else:
-            raise HTTPException(status_code=400, detail=f"Unknown algorithm: {request.algorithm}")
-        
-        # Perform matching
-        result = matcher.match(entities_a, entities_b, criteria)
-        
-        # Convert to response format
-        match_responses = [
-            MatchResponse(
-                entity_a_id=m.entity_a_id,
-                entity_b_id=m.entity_b_id,
-                score=m.score,
-                details=m.details
-            )
-            for m in result.matches
-        ]
-        
-        return MatchingResponse(
-            matches=match_responses,
-            unmatched_entities=result.unmatched_entities,
-            total_score=result.total_score,
-            execution_time=result.execution_time,
-            statistics=result.get_statistics()
-        )
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        result = matcher.match(a, b, criteria)
+        return {
+            "matches": [vars(m) for m in result.matches],
+            "unmatched_entities": result.unmatched_entities,
+            "total_score": result.total_score,
+            "execution_time": result.execution_time,
+            "statistics": result.get_statistics(),
+        }
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        request_id = uuid4().hex
+        logger.exception("Matching request failed: %s", request_id)
+        raise HTTPException(
+            status_code=500,
+            detail={"message": "Matching failed", "request_id": request_id},
+        ) from exc
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
