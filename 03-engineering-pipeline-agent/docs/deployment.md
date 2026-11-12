@@ -4,7 +4,7 @@
 
 ## Required inputs
 
-Run from a build directory containing a real `Dockerfile`, or supply `BUILD_CONTEXT`. The repository does not yet include a deployable application, Dockerfile or Kubernetes manifests for this project.
+Run from a build directory containing a real `Dockerfile`, or supply `BUILD_CONTEXT`. The runner Dockerfile packages batch workflows, not an application for this deployment script. Supply a separate application Dockerfile and Kubernetes manifests.
 
 You must already have an authenticated Docker registry, an accessible Kubernetes context, and a Deployment in the selected namespace. The Deployment and its container must both use `APP_NAME`. The environment argument doubles as the namespace and must be `dev`, `staging` or `production`.
 

@@ -1,0 +1,35 @@
+name: Common runner Docker
+on:
+  push:
+    paths: ['02-matching-project/**', '03-engineering-pipeline-agent/**', '.dockerignore', '.github/workflows/runner-docker.yml']
+  pull_request:
+    paths: ['02-matching-project/**', '03-engineering-pipeline-agent/**', '.dockerignore', '.github/workflows/runner-docker.yml']
+permissions:
+  contents: read
+jobs:
+  container:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Build and run Matching workflow in Docker
+        run: bash 03-engineering-pipeline-agent/scripts/run_container.sh
+        env:
+          RUNNER_IMAGE: git-proj-runner:ci
+      - name: Run runner regression suite inside the image
+        run: bash 03-engineering-pipeline-agent/scripts/run_container.sh --config /workspace/03-engineering-pipeline-agent/configs/pipeline-agent.json
+        env:
+          RUNNER_IMAGE: git-proj-runner:ci
+      - name: Build generic runner target
+        run: docker build --target runner -f 03-engineering-pipeline-agent/docker/Dockerfile -t git-proj-runner:base .
+      - name: Verify external workspace, failure propagation and timeout handling
+        run: python3 03-engineering-pipeline-agent/docker/smoke_test.py --image git-proj-runner:base
+      - name: Save container reports and logs
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: docker-runner-reports
+          path: .pipeline-runs/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7

@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-python@v7.1.0
         with:
           python-version: ${{ matrix.python }}
-      - run: bash -n scripts/deploy.sh
+      - run: bash -n scripts/deploy.sh scripts/run_container.sh
         working-directory: 03-engineering-pipeline-agent
       - run: python -B -m unittest discover -s tests -v
         working-directory: 03-engineering-pipeline-agent

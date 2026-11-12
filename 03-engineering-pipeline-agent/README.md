@@ -4,6 +4,16 @@ A configuration-driven Python runner for finite project commands. It runs real p
 
 The first integrated project is the [Matching API](../02-matching-project). Its GitHub workflow now uses this runner for dependency checks, tests, lint, formatting, examples and a benchmark smoke run. A second configuration runs this project's own regression suite and shell syntax check.
 
+## Run with Docker
+
+With Docker running, from the repository root:
+
+```bash
+bash 03-engineering-pipeline-agent/scripts/run_container.sh
+```
+
+This builds the bundled runner image and executes the Matching workflow. No local Python environment is required; reports stay in the host's `.pipeline-runs/` folder. See the [Docker guide](docs/docker.md) for configuration, the generic runner image, manual checks and CI results. This runs a batch workflow; it does not host or deploy the API.
+
 ## Run the Matching API workflow
 
 From the **GIT_PROJ repository root**, create a Python 3.13 environment and install the Matching API's locked dependencies:
@@ -47,7 +57,7 @@ The runner itself uses only the Python standard library and is tested on Python 
 - Atomic JSON reports updated as stages finish, with exit codes, durations and failure reasons.
 - Dry-run validation, meaningful command-line exit codes and downloadable CI report artifacts.
 
-This is a local/CI runner. Docker packaging, managed environments, deployment orchestration, parallel scheduling, automatic merging, AI decision-making and a hosted service are not implemented. The learning walkthrough is separate from this implementation and will follow later.
+This is a local/CI runner with Docker packaging. Managed environments beyond the bundled image, deployment orchestration, parallel scheduling, automatic merging, AI decision-making and a hosted service are not implemented. The learning walkthrough is separate from this implementation and will follow later.
 
 ## Add another project
 
@@ -69,7 +79,7 @@ From `03-engineering-pipeline-agent`:
 
 ```bash
 python3 -B -m unittest discover -s tests -v
-bash -n scripts/deploy.sh
+bash -n scripts/deploy.sh scripts/run_container.sh
 ```
 
 Tests cover real process execution, command failures, missing executables, deadlines, process-group cleanup, literal arguments, bounded output, dependencies, dry runs, malformed configurations and run isolation. Existing simulator and deployment-script regression tests remain included.
@@ -91,6 +101,8 @@ configs/matching.json       Real Matching API workflow
 configs/pipeline-agent.json This project's regression workflow
 agents/                     Legacy simulation
 scripts/deploy.sh           Separate deployment helper
+scripts/run_container.sh    Build and run the bundled Docker workflow
+docker/                     Dockerfile and explicit live-container checks
 tests/                      Runner, simulator and deployment-script tests
 docs/                       Configuration and deployment guides
 ```
