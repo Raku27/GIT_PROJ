@@ -201,6 +201,12 @@ The stage handlers currently simulate work. The supplied test-stage output repor
 
 The regression suite verifies failing/passing reports, invalid and empty reports, runner exceptions, explicit test skipping, and entry-point status codes. Disabling tests remains an explicit supported option. Dependency blocking when `stop_on_failure=False` is a separate known issue and is not addressed by this first fix.
 
+### Repeated executions
+
+Each call to `execute_pipeline` starts with fresh stage results and context. If fail-fast stops a run, unexecuted stages are explicitly marked skipped with a reason; old outputs, errors and timings are not reused. `stages_completed` lists only successful stages. Regression tests cover success followed by failure, failure followed by recovery, first-run early termination and optional-check changes between runs.
+
+This supports sequential reuse of one orchestrator instance. Concurrent calls on the same instance are not supported; use separate instances for concurrent runs.
+
 ## 📈 Performance Metrics
 
 - Pipeline execution time

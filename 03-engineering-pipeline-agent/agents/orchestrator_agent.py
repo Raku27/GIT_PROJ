@@ -72,6 +72,11 @@ class OrchestratorAgent:
         logger.info(f"Starting pipeline execution for project: {project_config.get('name', 'unknown')}")
         
         start_time = time.time()
+        # Each execution owns fresh result objects; previous runs are not inputs.
+        self.stage_results = {
+            stage: StageResult(stage, StageStatus.PENDING, 0.0, {})
+            for stage in self.stages
+        }
         self.context = {
             'project': project_config,
             'start_time': start_time,
@@ -83,11 +88,16 @@ class OrchestratorAgent:
             if self._should_execute_stage(stage):
                 result = self._execute_stage(stage)
                 self.stage_results[stage] = result
-                self.context['stages_completed'].append(stage)
+                if result.status == StageStatus.SUCCESS:
+                    self.context['stages_completed'].append(stage)
                 
                 # Stop on failure if configured
                 if result.status == StageStatus.FAILED and self.config.get('stop_on_failure', True):
                     logger.error(f"Pipeline stopped due to failure in stage: {stage.value}")
+                    for remaining in self.stage_results.values():
+                        if remaining.status == StageStatus.PENDING:
+                            remaining.status = StageStatus.SKIPPED
+                            remaining.error = f"Not executed after {stage.value} failed"
                     break
             else:
                 logger.info(f"Skipping stage: {stage.value}")
