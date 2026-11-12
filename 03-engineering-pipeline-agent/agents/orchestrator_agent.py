@@ -146,9 +146,12 @@ class OrchestratorAgent:
         logger.info(f"Executing stage: {stage.value}")
         start_time = time.time()
         
+        output = {}
         try:
             # Simulate stage execution (replace with actual implementation)
             output = self._run_stage_logic(stage)
+            if stage == PipelineStage.TEST:
+                self._validate_test_result(output)
             
             execution_time = time.time() - start_time
             
@@ -170,10 +173,24 @@ class OrchestratorAgent:
                 stage=stage,
                 status=StageStatus.FAILED,
                 execution_time=execution_time,
-                output={},
+                output=output,
                 error=str(e)
             )
     
+    @staticmethod
+    def _validate_test_result(output: Dict[str, Any]) -> None:
+        """Fail closed when tests fail or their reported counts are invalid."""
+        counts = [output.get(key) for key in ("tests_run", "tests_passed", "tests_failed")]
+        if any(type(value) is not int or value < 0 for value in counts):
+            raise ValueError("Test counts must be nonnegative integers")
+        tests_run, tests_passed, tests_failed = counts
+        if tests_run == 0:
+            raise ValueError("No tests were run")
+        if tests_passed + tests_failed != tests_run:
+            raise ValueError("Passed and failed test counts must sum to tests_run")
+        if tests_failed:
+            raise RuntimeError(f"{tests_failed} test(s) failed")
+
     def _run_stage_logic(self, stage: PipelineStage) -> Dict[str, Any]:
         """
         Execute the actual logic for a stage
@@ -333,7 +350,8 @@ def main():
     
     if result['failed_stages']:
         print(f"Failed Stages: {', '.join(result['failed_stages'])}")
+    return 0 if result['pipeline_status'] == 'success' else 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

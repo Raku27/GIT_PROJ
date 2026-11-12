@@ -85,5 +85,8 @@ def main():
     print("3. Integrate with Jenkins, GitHub Actions, or GitLab CI")
     print("=" * 60)
 
+    return 0 if result['pipeline_status'] == 'success' else 1
+
+
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -191,16 +191,15 @@ curl -X POST http://localhost:8000/api/pipeline/trigger \
 
 ## 🧪 Testing
 
+From `03-engineering-pipeline-agent`, run the regression tests with the Python standard library:
+
 ```bash
-# Run pipeline tests
-pytest tests/
-
-# Test agent functionality
-python -m pytest tests/test_agents.py
-
-# Integration tests
-python -m pytest tests/integration/
+python -B -m unittest discover -s tests -v
 ```
+
+The stage handlers currently simulate work. The supplied test-stage output reports 150 tests, including two failures; these are illustrative counts, not results from this regression suite. The orchestrator now marks that stage and pipeline failed, retains its output for inspection, and stops before deployment with the default `stop_on_failure=True` setting. Both Python entry points return exit status 1 for failure and 0 for success.
+
+The regression suite verifies failing/passing reports, invalid and empty reports, runner exceptions, explicit test skipping, and entry-point status codes. Disabling tests remains an explicit supported option. Dependency blocking when `stop_on_failure=False` is a separate known issue and is not addressed by this first fix.
 
 ## 📈 Performance Metrics
 
