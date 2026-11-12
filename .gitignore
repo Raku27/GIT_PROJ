@@ -114,3 +114,9 @@ models/**/*.joblib
 
 # PowerBI files (can be large)
 *.pbix
+
+# Local pipeline execution reports and command logs
+.pipeline-runs/
+
+# Local Python development environment
+.venv/

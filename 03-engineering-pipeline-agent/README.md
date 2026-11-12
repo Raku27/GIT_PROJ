@@ -1,258 +1,98 @@
-# Engineering Pipeline with Agent
+# Common Project Runner
 
-[![CI/CD](https://img.shields.io/badge/CI/CD-Automated-blue.svg)]()
-[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+A configuration-driven Python runner for finite project commands. It runs real processes, checks their exit codes, enforces timeouts, saves logs and blocks dependent stages after failure.
 
-## 📋 Overview
+The first integrated project is the [Matching API](../02-matching-project). Its GitHub workflow now uses this runner for dependency checks, tests, lint, formatting, examples and a benchmark smoke run. A second configuration runs this project's own regression suite and shell syntax check.
 
-An intelligent, agent-based engineering pipeline system that automates software development workflows, CI/CD processes, and infrastructure management. This project demonstrates expertise in automation, orchestration, agent-based systems, and DevOps practices.
+## Run the Matching API workflow
 
-## ✨ Features
-
-- **Intelligent Agent Orchestration**: AI-powered agents for automated decision-making
-- **CI/CD Pipeline Automation**: Automated build, test, and deployment workflows
-- **Multi-Stage Pipeline**: Support for complex multi-stage deployment processes
-- **Monitoring & Logging**: Comprehensive observability and alerting
-- **Infrastructure as Code**: Automated infrastructure provisioning and management
-- **Self-Healing**: Automatic error detection and recovery
-- **Scalability**: Horizontal scaling and load balancing
-- **Security**: Automated security scanning and compliance checks
-
-## 🎯 Key Capabilities
-
-- Automated code quality checks
-- Intelligent test selection and execution
-- Automated deployment strategies (blue-green, canary, rolling)
-- Resource optimization and cost management
-- Performance monitoring and optimization
-- Automated rollback on failures
-
-## 🛠️ Technologies Used
-
-- **Orchestration**: Kubernetes, Docker Compose
-- **CI/CD**: Jenkins, GitHub Actions, GitLab CI, or Azure DevOps
-- **Agent Framework**: LangChain, AutoGPT, or custom agent implementation
-- **Containerization**: Docker
-- **Infrastructure**: Terraform, Ansible
-- **Monitoring**: Prometheus, Grafana, ELK Stack
-- **Languages**: Python, YAML, Bash
-- **Cloud**: AWS, Azure, or GCP (optional)
-
-## 📁 Project Structure
-
-```
-03-engineering-pipeline-agent/
-├── agents/                 # Agent implementations
-│   ├── orchestrator_agent.py
-│   ├── deployment_agent.py
-│   └── monitoring_agent.py
-├── pipelines/              # Pipeline definitions
-│   ├── ci_pipeline.yml
-│   ├── cd_pipeline.yml
-│   └── custom_pipelines/
-├── infrastructure/         # Infrastructure as Code
-│   ├── terraform/
-│   └── ansible/
-├── docker/                 # Docker configurations
-│   ├── Dockerfile
-│   └── docker-compose.yml
-├── scripts/                # Automation scripts
-│   ├── deploy.sh
-│   └── health_check.sh
-├── monitoring/             # Monitoring configurations
-│   ├── prometheus/
-│   └── grafana/
-├── tests/                  # Pipeline tests
-├── docs/                   # Documentation
-│   ├── architecture.md
-│   └── agent_design.md
-└── README.md               # This file
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Docker and Docker Compose
-- Kubernetes cluster (optional, for production)
-- Python 3.8+
-- Git
-- CI/CD platform access (Jenkins, GitHub Actions, etc.)
-
-### Installation
+From the **GIT_PROJ repository root**, create a Python 3.13 environment and install the Matching API's locked dependencies:
 
 ```bash
-# Clone the repository
-git clone https://github.com/Raku27/GIT_PROJ.git
-cd GIT_PROJ/03-engineering-pipeline-agent
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r 02-matching-project/requirements-lock.txt
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Validate and inspect commands without running them.
+python 03-engineering-pipeline-agent/run_pipeline.py \
+  --config 03-engineering-pipeline-agent/configs/matching.json \
+  --workspace . --dry-run
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up Docker
-docker-compose up -d
+# Execute the configured workflow.
+python 03-engineering-pipeline-agent/run_pipeline.py \
+  --config 03-engineering-pipeline-agent/configs/matching.json \
+  --workspace .
 ```
 
-### Configuration
+Expected: seven successful stages and a path to a new `report.json`. The Matching API test log contains 46 passing tests. Missing dependencies cause a real failure; the runner does not install packages automatically.
 
-1. **Environment Variables**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-2. **Agent Configuration**:
-   ```yaml
-   # config/agent_config.yml
-   agents:
-     orchestrator:
-       enabled: true
-       model: "gpt-4"
-     deployment:
-       enabled: true
-       strategy: "blue-green"
-   ```
-
-### Usage
-
-#### Start the Pipeline Agent
+Run this project's checks through the same entry point:
 
 ```bash
-# Start orchestrator agent
-python agents/orchestrator_agent.py
-
-# Or use Docker Compose
-docker-compose up orchestrator-agent
+python 03-engineering-pipeline-agent/run_pipeline.py \
+  --config 03-engineering-pipeline-agent/configs/pipeline-agent.json \
+  --workspace .
 ```
 
-#### Trigger Pipeline
+The runner itself uses only the Python standard library and is tested on Python 3.8 and 3.13, Linux and local macOS. The Matching API target requires Python 3.13. Windows execution is not supported yet.
+
+## What works
+
+- JSON project configurations with validated paths, arguments, dependencies and timeouts.
+- Real commands executed as argument arrays, without an implicit shell.
+- Sequential scheduling with explicit dependencies; independent checks may continue after a failure.
+- Timeout and cancellation cleanup of the command's POSIX process group.
+- Unique report directories and fresh results for every run.
+- Separate stdout/stderr logs capped at 1 MiB each per stage; excess output is drained and discarded.
+- Atomic JSON reports updated as stages finish, with exit codes, durations and failure reasons.
+- Dry-run validation, meaningful command-line exit codes and downloadable CI report artifacts.
+
+This is a local/CI runner. Docker packaging, managed environments, deployment orchestration, parallel scheduling, automatic merging, AI decision-making and a hosted service are not implemented. The learning walkthrough is separate from this implementation and will follow later.
+
+## Add another project
+
+Create a configuration following [the configuration guide](docs/runner.md). Set its workspace-relative project folder, commands and dependencies. Install that project's dependencies in an appropriate environment, then invoke the common runner with that configuration.
+
+Configurations execute code with your account's permissions. Run only reviewed, trusted configurations and project code. Workspace-path validation and argument arrays do not isolate commands from your computer or network. Commands inherit the invoking environment; the runner does not collect it in reports. Arguments and command output are recorded, so do not put credentials in arguments or allow commands to print secrets.
+
+## Inspect a run
+
+The terminal prints the report path under `.pipeline-runs/<name>-<unique-id>/`. Open `report.json` to see stage statuses, executed argument arrays, return codes, dependencies, timings and relative log paths. Logs and reports are ignored by Git.
+
+On GitHub, open **Actions → Matching service tests → the run → Artifacts → matching-runner-report**. The artifact contains the same report, command logs and benchmark smoke output. CI retains it for seven days.
+
+Exit codes: **0** success, **1** workflow failure, **2** invalid configuration or setup/report error, **130** interrupted execution. A truncated log is explicitly marked in the report and does not itself make the command fail.
+
+## Verify the runner
+
+From `03-engineering-pipeline-agent`:
 
 ```bash
-# Manual trigger
-python scripts/trigger_pipeline.py --stage build --project myproject
-
-# Via API
-curl -X POST http://localhost:8000/api/pipeline/trigger \
-  -H "Content-Type: application/json" \
-  -d '{"project": "myproject", "stage": "build"}'
+python3 -B -m unittest discover -s tests -v
+bash -n scripts/deploy.sh
 ```
 
-## 🤖 Agent Architecture
+Tests cover real process execution, command failures, missing executables, deadlines, process-group cleanup, literal arguments, bounded output, dependencies, dry runs, malformed configurations and run isolation. Existing simulator and deployment-script regression tests remain included.
 
-### Orchestrator Agent
-- Coordinates pipeline stages
-- Makes decisions based on context
-- Handles error recovery
-- Optimizes resource allocation
+## Legacy simulator and deployment script
 
-### Deployment Agent
-- Manages deployment strategies
-- Monitors deployment health
-- Handles rollback procedures
-- Validates deployment success
+`agents/orchestrator_agent.py` and `example_usage.py` retain the original eight-stage **simulation** for regression coverage. Its hardcoded test report contains two failures; the example intentionally stops and returns status 1. The new runner in `runner/` executes commands and does not use those simulated results.
 
-### Monitoring Agent
-- Tracks system metrics
-- Detects anomalies
-- Triggers alerts
-- Provides insights
+`scripts/deploy.sh` is a separate real Docker/Kubernetes helper requiring an application Dockerfile, an existing Kubernetes Deployment, registry access and explicit target settings. It is not invoked by the supplied configurations. See [deployment requirements and safe checks](docs/deployment.md). No live deployment has been validated.
 
-## 🔄 Pipeline Stages
+The older YAML files in `pipelines/` are illustrative templates, not executable runner configurations. JSON is the supported format for the common runner.
 
-1. **Source**: Code checkout and validation
-2. **Build**: Compilation and artifact creation
-3. **Test**: Automated testing (unit, integration, e2e)
-4. **Quality**: Code quality and security scanning
-5. **Package**: Container/image creation
-6. **Deploy**: Deployment to environments
-7. **Verify**: Post-deployment validation
-8. **Monitor**: Continuous monitoring
+## Layout
 
-## 📊 Monitoring & Observability
-
-- **Metrics**: CPU, memory, response times, error rates
-- **Logs**: Centralized logging with search capabilities
-- **Traces**: Distributed tracing for request flows
-- **Alerts**: Configurable alerting rules
-- **Dashboards**: Real-time visualization
-
-## 🔒 Security Features
-
-- Automated security scanning (SAST, DAST)
-- Dependency vulnerability checks
-- Secrets management
-- Access control and RBAC
-- Compliance validation
-
-## 🧪 Testing
-
-From `03-engineering-pipeline-agent`, run the regression tests with the Python standard library:
-
-```bash
-python -B -m unittest discover -s tests -v
+```text
+runner/                     Config validation, process execution, reports and CLI
+run_pipeline.py             Repository-root-friendly entry point
+configs/matching.json       Real Matching API workflow
+configs/pipeline-agent.json This project's regression workflow
+agents/                     Legacy simulation
+scripts/deploy.sh           Separate deployment helper
+tests/                      Runner, simulator and deployment-script tests
+docs/                       Configuration and deployment guides
 ```
 
-The stage handlers currently simulate work. The supplied test-stage output reports 150 tests, including two failures; these are illustrative counts, not results from this regression suite. The orchestrator now marks that stage and pipeline failed, retains its output for inspection, and stops before deployment with the default `stop_on_failure=True` setting. Both Python entry points return exit status 1 for failure and 0 for success.
-
-The regression suite verifies failing/passing reports, invalid and empty reports, runner exceptions, explicit test skipping, and entry-point status codes. Disabling tests remains an explicit supported option. With `stop_on_failure=False`, the pipeline continues evaluating stage eligibility, but a failed prerequisite blocks every later stage, which is recorded as skipped. Packaging, deployment, verification and monitoring cannot resume after an earlier failure. Missing, unfinished and unexpectedly skipped prerequisites also block execution. Explicitly disabling tests or quality checks allows later stages to run only when all other prerequisites succeed.
-
-The dependency regression tests cover failures at every prerequisite stage, test-result failures, missing/unfinished prerequisites, explicit optional-check disabling, and the all-successful path. Stage dependencies are sequential, not a general dependency graph. Run-state isolation between repeated executions remains separate follow-up work.
-
-### Repeated executions
-
-Each call to `execute_pipeline` starts with fresh stage results and context. If fail-fast stops a run, unexecuted stages are explicitly marked skipped with a reason; old outputs, errors and timings are not reused. `stages_completed` lists only successful stages. Regression tests cover success followed by failure, failure followed by recovery, first-run early termination and optional-check changes between runs.
-
-This supports sequential reuse of one orchestrator instance. Concurrent calls on the same instance are not supported; use separate instances for concurrent runs.
-
-### Deployment-script checks
-
-The separate shell script now fails when required tools/configuration are missing, its Kubernetes target is inaccessible, image publication or rollout fails, or the health endpoint does not return HTTP 200. It requires explicit cluster/health settings and a real Dockerfile. The Python stages still simulate deployment and do not call this script.
-
-See the [deployment guide](docs/deployment.md) for required inputs, timeout settings, no-deployment manual checks and remaining limitations. The script tests use fake commands and do not deploy an application.
-
-## 📈 Performance Metrics
-
-- Pipeline execution time
-- Success/failure rates
-- Resource utilization
-- Deployment frequency
-- Mean time to recovery (MTTR)
-
-## 📚 Documentation
-
-- [Architecture Overview](docs/architecture.md) - System architecture
-- [Agent Design](docs/agent_design.md) - Agent implementation details
-- [Pipeline Guide](docs/pipeline_guide.md) - How to create custom pipelines
-- [Deployment Guide](docs/deployment.md) - Deployment strategies
-
-## 🎯 Use Cases
-
-- Software development lifecycle automation
-- Microservices deployment
-- Multi-environment management (dev, staging, prod)
-- Automated testing and quality assurance
-- Infrastructure provisioning
-- Disaster recovery automation
-
-## 🤝 Contributing
-
-Contributions are welcome! Please read the [Contributing Guidelines](../../CONTRIBUTING.md) first.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
-
-## 👤 Author
-
-**Rahul Kumaar Subramani**
-- GitHub: [@Raku27](https://github.com/Raku27)
-- Email: rahulkumaar27@gmail.com
-
----
-
-⭐ If you found this project helpful, please give it a star!
+[MIT license](../LICENSE) · [Contributing](../CONTRIBUTING.md) · [Rahul Kumaar Subramani](https://github.com/Raku27)

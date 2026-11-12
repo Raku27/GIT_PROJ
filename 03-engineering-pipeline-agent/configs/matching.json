@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "name": "matching-api",
+  "project_dir": "02-matching-project",
+  "fail_fast": false,
+  "stages": [
+    {
+      "name": "dependencies",
+      "argv": [
+        "{python}",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "timeout_seconds": 30
+    },
+    {
+      "name": "tests",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "--cov=src",
+        "--cov-report=term-missing"
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "name": "lint",
+      "argv": [
+        "{python}",
+        "-m",
+        "ruff",
+        "check",
+        "src",
+        "tests",
+        "examples",
+        "benchmarks",
+        "example_usage.py"
+      ],
+      "needs": [],
+      "timeout_seconds": 30
+    },
+    {
+      "name": "format",
+      "argv": [
+        "{python}",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "src",
+        "tests",
+        "examples",
+        "benchmarks",
+        "example_usage.py"
+      ],
+      "needs": [],
+      "timeout_seconds": 30
+    },
+    {
+      "name": "example",
+      "argv": [
+        "{python}",
+        "example_usage.py"
+      ],
+      "needs": [
+        "tests",
+        "lint",
+        "format"
+      ],
+      "timeout_seconds": 30
+    },
+    {
+      "name": "tradeoff",
+      "argv": [
+        "{python}",
+        "-m",
+        "examples.algorithm_tradeoff"
+      ],
+      "timeout_seconds": 30
+    },
+    {
+      "name": "benchmark-smoke",
+      "argv": [
+        "{python}",
+        "-m",
+        "benchmarks.run",
+        "--sizes",
+        "2",
+        "--repeats",
+        "1",
+        "--output",
+        "{run_dir}/benchmark-smoke.json"
+      ],
+      "timeout_seconds": 30
+    }
+  ]
+}
