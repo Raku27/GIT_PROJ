@@ -1,0 +1,18 @@
+# Only public runner/Matching project files belong in this build context.
+**
+!02-matching-project/
+!02-matching-project/**
+!03-engineering-pipeline-agent/
+!03-engineering-pipeline-agent/**
+**/.git
+**/.env
+**/.env.*
+**/.venv
+**/venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/.ruff_cache
+**/.coverage
+**/.pipeline-runs
+**/*.log

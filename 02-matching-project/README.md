@@ -29,6 +29,16 @@ The server binds to `127.0.0.1:8000`. Open [Swagger UI](http://127.0.0.1:8000/do
 
 `requirements.txt` pins direct runtime dependencies; `requirements-dev.txt` adds test tools; `requirements-lock.txt` pins the complete tested runtime and test environment.
 
+## Run checks in Docker
+
+From the repository root, with Docker running:
+
+```bash
+bash 03-engineering-pipeline-agent/scripts/run_container.sh
+```
+
+This runs the seven-stage verification workflow in a packaged Python environment and saves logs/reports on the host. It does not start the API server. See the [Docker guide](../03-engineering-pipeline-agent/docs/docker.md).
+
 ## Example result
 
 The supplied example maps `skills → required_skills`, `experience_years → min_experience` and `education → education_level`. Both algorithms return:

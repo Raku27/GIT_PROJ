@@ -34,6 +34,7 @@ A configuration-driven Python runner for real project commands, with dependency 
 - Reusable JSON configurations for Matching API and runner regression checks
 - Real exit-code handling, bounded logs, process-group cleanup and fresh run state
 - Matching API's GitHub workflow uses the shared runner
+- [One-command Docker workflow](./03-engineering-pipeline-agent/docs/docker.md) with reports saved on the host
 - [Setup and current limitations](./03-engineering-pipeline-agent/README.md)
 
 ### 4. 🤖 [AI Analysis](./04-ai-analysis)
