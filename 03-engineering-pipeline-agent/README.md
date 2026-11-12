@@ -203,6 +203,12 @@ The regression suite verifies failing/passing reports, invalid and empty reports
 
 The dependency regression tests cover failures at every prerequisite stage, test-result failures, missing/unfinished prerequisites, explicit optional-check disabling, and the all-successful path. Stage dependencies are sequential, not a general dependency graph. Run-state isolation between repeated executions remains separate follow-up work.
 
+### Repeated executions
+
+Each call to `execute_pipeline` starts with fresh stage results and context. If fail-fast stops a run, unexecuted stages are explicitly marked skipped with a reason; old outputs, errors and timings are not reused. `stages_completed` lists only successful stages. Regression tests cover success followed by failure, failure followed by recovery, first-run early termination and optional-check changes between runs.
+
+This supports sequential reuse of one orchestrator instance. Concurrent calls on the same instance are not supported; use separate instances for concurrent runs.
+
 ## 📈 Performance Metrics
 
 - Pipeline execution time
