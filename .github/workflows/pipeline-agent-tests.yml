@@ -1,0 +1,25 @@
+name: Pipeline agent regression tests
+on:
+  push:
+    paths: ['03-engineering-pipeline-agent/**', '.github/workflows/pipeline-agent-tests.yml']
+  pull_request:
+    paths: ['03-engineering-pipeline-agent/**', '.github/workflows/pipeline-agent-tests.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - python: '3.8'
+            os: ubuntu-22.04
+          - python: '3.13'
+            os: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -B -m unittest discover -s tests -v
+        working-directory: 03-engineering-pipeline-agent
