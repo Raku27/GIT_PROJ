@@ -199,7 +199,9 @@ python -B -m unittest discover -s tests -v
 
 The stage handlers currently simulate work. The supplied test-stage output reports 150 tests, including two failures; these are illustrative counts, not results from this regression suite. The orchestrator now marks that stage and pipeline failed, retains its output for inspection, and stops before deployment with the default `stop_on_failure=True` setting. Both Python entry points return exit status 1 for failure and 0 for success.
 
-The regression suite verifies failing/passing reports, invalid and empty reports, runner exceptions, explicit test skipping, and entry-point status codes. Disabling tests remains an explicit supported option. Dependency blocking when `stop_on_failure=False` is a separate known issue and is not addressed by this first fix.
+The regression suite verifies failing/passing reports, invalid and empty reports, runner exceptions, explicit test skipping, and entry-point status codes. Disabling tests remains an explicit supported option. With `stop_on_failure=False`, the pipeline continues evaluating stage eligibility, but a failed prerequisite blocks every later stage, which is recorded as skipped. Packaging, deployment, verification and monitoring cannot resume after an earlier failure. Missing, unfinished and unexpectedly skipped prerequisites also block execution. Explicitly disabling tests or quality checks allows later stages to run only when all other prerequisites succeed.
+
+The dependency regression tests cover failures at every prerequisite stage, test-result failures, missing/unfinished prerequisites, explicit optional-check disabling, and the all-successful path. Stage dependencies are sequential, not a general dependency graph. Run-state isolation between repeated executions remains separate follow-up work.
 
 ## 📈 Performance Metrics
 

@@ -117,22 +117,30 @@ class OrchestratorAgent:
         Returns:
             True if stage should be executed
         """
-        # Check if previous stage failed
-        stage_index = self.stages.index(stage)
-        if stage_index > 0:
-            prev_stage = self.stages[stage_index - 1]
-            prev_result = self.stage_results.get(prev_stage)
-            if prev_result and prev_result.status == StageStatus.FAILED:
+        if self._stage_is_disabled(stage):
+            return False
+
+        # The pipeline is sequential: every earlier enabled stage is a prerequisite.
+        # A skipped stage must not hide an earlier failure and reopen deployment.
+        for prerequisite in self.stages[:self.stages.index(stage)]:
+            result = self.stage_results.get(prerequisite)
+            if result is None:
                 return False
-        
-        # Check stage-specific conditions
-        if stage == PipelineStage.TEST:
-            return self.config.get('run_tests', True)
-        elif stage == PipelineStage.QUALITY:
-            return self.config.get('run_quality_checks', True)
-        
+            if result.status == StageStatus.SUCCESS:
+                continue
+            if result.status == StageStatus.SKIPPED and self._stage_is_disabled(prerequisite):
+                continue
+            return False
         return True
-    
+
+    def _stage_is_disabled(self, stage: PipelineStage) -> bool:
+        """Only explicitly disabled optional checks may be skipped without blocking."""
+        if stage == PipelineStage.TEST:
+            return not self.config.get('run_tests', True)
+        if stage == PipelineStage.QUALITY:
+            return not self.config.get('run_quality_checks', True)
+        return False
+
     def _execute_stage(self, stage: PipelineStage) -> StageResult:
         """
         Execute a single pipeline stage
