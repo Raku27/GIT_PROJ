@@ -209,6 +209,12 @@ Each call to `execute_pipeline` starts with fresh stage results and context. If 
 
 This supports sequential reuse of one orchestrator instance. Concurrent calls on the same instance are not supported; use separate instances for concurrent runs.
 
+### Deployment-script checks
+
+The separate shell script now fails when required tools/configuration are missing, its Kubernetes target is inaccessible, image publication or rollout fails, or the health endpoint does not return HTTP 200. It requires explicit cluster/health settings and a real Dockerfile. The Python stages still simulate deployment and do not call this script.
+
+See the [deployment guide](docs/deployment.md) for required inputs, timeout settings, no-deployment manual checks and remaining limitations. The script tests use fake commands and do not deploy an application.
+
 ## 📈 Performance Metrics
 
 - Pipeline execution time
